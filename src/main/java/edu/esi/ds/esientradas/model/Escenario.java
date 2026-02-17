@@ -3,6 +3,8 @@ package edu.esi.ds.esientradas.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
@@ -42,6 +44,7 @@ public class Escenario {
         this.descripcion = descripcion;
     }
 
+    @JsonIgnore
     public List<Espectaculo> getEspectaculos() {
         return espectaculos;
     }

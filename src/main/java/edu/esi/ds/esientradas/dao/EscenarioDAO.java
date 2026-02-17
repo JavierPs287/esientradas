@@ -1,5 +1,9 @@
 package edu.esi.ds.esientradas.dao;
 
-public interface EscenarioDAO {
-    
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import edu.esi.ds.esientradas.model.Escenario;
+
+public interface EscenarioDAO extends JpaRepository<Escenario, Long> {
+
 }

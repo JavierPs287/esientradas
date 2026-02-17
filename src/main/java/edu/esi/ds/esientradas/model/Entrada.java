@@ -1,5 +1,7 @@
 package edu.esi.ds.esientradas.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -31,6 +33,8 @@ public abstract class Entrada {
     public void setId(Long id) {
         this.id = id;
     }
+
+    @JsonIgnore
     public Espectaculo getEspectaculo() {
         return espectaculo;
     }
