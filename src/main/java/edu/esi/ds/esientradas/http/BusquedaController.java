@@ -10,21 +10,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
-<<<<<<< HEAD
-
-import edu.esi.ds.esientradas.dto.DTOEspectaculo;
-=======
->>>>>>> ea08172e203610baa8a53b5883f56a300e91d28c
 
 import edu.esi.ds.esientradas.dto.DtoEspectaculo;
 import edu.esi.ds.esientradas.model.Entrada;
 import edu.esi.ds.esientradas.model.Escenario;
 import edu.esi.ds.esientradas.model.Espectaculo;
-<<<<<<< HEAD
 import edu.esi.ds.esientradas.model.Entrada;
 
-=======
->>>>>>> ea08172e203610baa8a53b5883f56a300e91d28c
 import edu.esi.ds.esientradas.services.BusquedaService;
 
 @RestController
@@ -44,27 +36,6 @@ public class BusquedaController {
         List<Espectaculo> espectaculos = this.service.getEspectaculos(artista);
         List<DtoEspectaculo> dtos = espectaculos.stream().map(e -> {
             DtoEspectaculo dto = new DtoEspectaculo();
-            dto.setArtista(e.getArtista());
-            dto.setFecha(e.getFecha());
-            dto.setEscenario(e.getEscenario().getNombre());
-            return dto;
-        }).toList();
-
-        return dtos;
-    }
-
-    @GetMapping("/getEntradas")
-    public List<Entrada> getEntradas(@RequestBody DtoEspectaculo dto) {
-        return this.service.getEntradas(dto);
-    }
-    
-    @GetMapping("/getEspectaculos")
-    public List<DTOEspectaculo> getEspectaculos(@RequestParam String artista) {
-        List <Espectaculo> espetaculos = this.service.getEspectaculos(artista);
-
-        List <DTOEspectaculo> dtos = espetaculos.stream().map(e -> {
-            DTOEspectaculo dto = new DTOEspectaculo();
-            dto.setId(e.getId());
             dto.setArtista(e.getArtista());
             dto.setFecha(e.getFecha());
             dto.setEscenario(e.getEscenario().getNombre());
