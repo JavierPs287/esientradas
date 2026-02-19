@@ -8,8 +8,10 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import edu.esi.ds.esientradas.dto.DtoEspectaculo;
+import edu.esi.ds.esientradas.model.Entrada;
 import edu.esi.ds.esientradas.model.Escenario;
 import edu.esi.ds.esientradas.model.Espectaculo;
 import edu.esi.ds.esientradas.services.BusquedaService;
@@ -36,8 +38,13 @@ public class BusquedaController {
             dto.setEscenario(e.getEscenario().getNombre());
             return dto;
         }).toList();
-        
+
         return dtos;
+    }
+
+    @GetMapping("/getEntradas")
+    public List<Entrada> getEntradas(@RequestBody DtoEspectaculo dto) {
+        return this.service.getEntradas(dto);
     }
     
     @GetMapping("/saludar/{nombre}")
