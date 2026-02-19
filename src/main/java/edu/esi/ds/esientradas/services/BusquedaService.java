@@ -5,8 +5,9 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import edu.esi.ds.esientradas.model.Escenario;
-
+import edu.esi.ds.esientradas.model.Espectaculo;
 import edu.esi.ds.esientradas.dao.EscenarioDAO;
+import edu.esi.ds.esientradas.dao.EspectaculoDAO;
 
 import org.springframework.stereotype.Service;
 
@@ -14,9 +15,16 @@ import org.springframework.stereotype.Service;
 public class BusquedaService {
 
     @Autowired
-    private EscenarioDAO dao;
+    private EscenarioDAO escenarioDAO;
+
+    @Autowired
+    private EspectaculoDAO espectaculoDAO;
 
     public List<Escenario> getEscenarios() {
-        return this.dao.findAll();
+        return this.escenarioDAO.findAll();
+    }
+
+    public List<Espectaculo> getEspectaculos(String artista) {
+        return this.espectaculoDAO.findByArtista(artista);
     }
 }

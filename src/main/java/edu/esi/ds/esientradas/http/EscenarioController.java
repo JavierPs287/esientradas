@@ -1,8 +1,10 @@
 package edu.esi.ds.esientradas.http;
 
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -19,6 +21,12 @@ public class EscenarioController {
 
     @PostMapping("/insertar")
     public void insertarEscenario(@RequestBody Escenario escenario) {
+        if(escenario.getNombre() == null || escenario.getNombre().isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El nombre del escenario no puede ser nulo o vacío");
+        }
+        if(escenario.getDescripcion() == null || escenario.getDescripcion().isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "La descripción del escenario no puede ser nula o vacía");
+        }
         this.service.insertarEscenario(escenario);
     }
 }
