@@ -21,14 +21,21 @@ public class EscenarioController {
 
     @PostMapping("/insertar")
     public void insertarEscenario(@RequestBody Escenario escenario) {
+<<<<<<< HEAD
 
+=======
+>>>>>>> ea08172e203610baa8a53b5883f56a300e91d28c
         if(escenario.getNombre() == null || escenario.getNombre().isEmpty()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El nombre del escenario no puede ser nulo o vacío");
         }
         if(escenario.getDescripcion() == null || escenario.getDescripcion().isEmpty()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "La descripción del escenario no puede ser nula o vacía");
         }
+<<<<<<< HEAD
 
         this.service.insertar(escenario);
+=======
+        this.service.insertarEscenario(escenario);
+>>>>>>> ea08172e203610baa8a53b5883f56a300e91d28c
     }
 }
