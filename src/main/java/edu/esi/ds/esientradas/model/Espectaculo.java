@@ -63,6 +63,7 @@ public class Espectaculo {
         this.escenario = escenario;
     }
     
+    @JsonIgnore
     public List<Entrada> getEntradas() {
         return entradas;
     }
