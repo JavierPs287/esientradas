@@ -8,8 +8,4 @@ import edu.esi.ds.esientradas.model.Espectaculo;
 
 public interface EspectaculoDAO extends JpaRepository<Espectaculo, Long> {
     List<Espectaculo> findByArtista(String artista);
-<<<<<<< HEAD
-=======
-
->>>>>>> ea08172e203610baa8a53b5883f56a300e91d28c
 }
