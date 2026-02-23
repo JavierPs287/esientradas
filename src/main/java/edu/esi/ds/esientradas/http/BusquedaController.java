@@ -1,7 +1,6 @@
 package edu.esi.ds.esientradas.http;
 
 import java.util.List;
-import java.time.LocalDateTime;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -9,13 +8,11 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
 
 import edu.esi.ds.esientradas.dto.DtoEspectaculo;
 import edu.esi.ds.esientradas.model.Entrada;
 import edu.esi.ds.esientradas.model.Escenario;
 import edu.esi.ds.esientradas.model.Espectaculo;
-import edu.esi.ds.esientradas.model.Entrada;
 
 import edu.esi.ds.esientradas.services.BusquedaService;
 
@@ -46,8 +43,8 @@ public class BusquedaController {
     }
 
     @GetMapping("/getEntradas")
-    public List<Entrada> getEntradas(@RequestParam String espectaculoId) {
-        //return this.service.getEntradas(dto);
+    public List<Entrada> getEntradas(@RequestParam Long espectaculoId) {
+        return this.service.getEntradas(espectaculoId);
     }
 
     @GetMapping("/saludar/{nombre}")
