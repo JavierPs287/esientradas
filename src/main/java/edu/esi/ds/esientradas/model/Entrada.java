@@ -1,6 +1,9 @@
 package edu.esi.ds.esientradas.model;
 
+import org.springframework.data.annotation.Transient;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import edu.esi.ds.esientradas.model.Token;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -27,6 +30,9 @@ public abstract class Entrada {
     @Enumerated(EnumType.STRING)
     protected Estado estado;
 
+    @Transient
+    protected Token token;
+
     public Long getId() {
         return id;
     }
@@ -52,5 +58,9 @@ public abstract class Entrada {
     }
     public void setPrecio(Long precio) {
         this.precio = precio;
+    }
+
+    public void setToken(Token token) {
+        this.token = token;
     }
 }
