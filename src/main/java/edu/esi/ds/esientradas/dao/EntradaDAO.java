@@ -9,10 +9,12 @@ import org.springframework.data.repository.query.Param;
 
 import edu.esi.ds.esientradas.model.Entrada;
 import edu.esi.ds.esientradas.model.Estado;
+import jakarta.transaction.Transactional;
 
 public interface EntradaDAO extends JpaRepository<Entrada, Long> {
     List<Entrada> findByEspectaculoId(Long espectaculoId);
 
+    @Transactional
     @Query(value = "UPDATE Entrada e SET e.estado = :estado WHERE e.id = :idEntrada")
     @Modifying
     void updateEstado(@Param("idEntrada") Long idEntrada, @Param("estado") Estado estado);
