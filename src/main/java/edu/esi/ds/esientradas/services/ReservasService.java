@@ -1,5 +1,7 @@
 package edu.esi.ds.esientradas.services;
 
+import jakarta.servlet.http.HttpSession;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -24,7 +26,7 @@ public class ReservasService {
     private TokenDAO tokenDAO;
 
     @Transactional
-    public Long reservar(Long idEntrada) {
+    public Long reservar(Long idEntrada, HttpSession session) {
         Entrada entrada = this.entradaDAO.findById(idEntrada).orElseThrow(
             () -> new ResponseStatusException(HttpStatus.NOT_FOUND,"Entrada no encontrada")
         );
@@ -35,6 +37,7 @@ public class ReservasService {
 
         Token token = new Token();
         token.setEntrada(entrada);
+        token.setSessionId(session.getId());
         this.tokenDAO.save(token);
 
         this.entradaDAO.updateEstado(idEntrada, Estado.RESERVADA);

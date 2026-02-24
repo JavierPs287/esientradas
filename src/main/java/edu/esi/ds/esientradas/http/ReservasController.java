@@ -20,7 +20,7 @@ public class ReservasController {
     // TODO A lo mejor conviene cambiar coger el array de entradas en lugar de ir 1 por 1
     @PutMapping("/reservar")
     public Long reservar(HttpSession session, @RequestParam Long idEntrada){
-        Long precioEntrada = this.reservasService.reservar(idEntrada);
+        Long precioEntrada = this.reservasService.reservar(idEntrada, session);
         Long precioTotal = (Long) session.getAttribute("precioTotal");
         if(precioTotal == null){
             precioTotal = precioEntrada;

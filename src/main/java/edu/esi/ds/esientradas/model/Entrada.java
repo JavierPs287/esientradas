@@ -1,9 +1,6 @@
 package edu.esi.ds.esientradas.model;
 
-import org.springframework.data.annotation.Transient;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import edu.esi.ds.esientradas.model.Token;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -15,6 +12,7 @@ import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Transient;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
