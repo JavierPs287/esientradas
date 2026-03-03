@@ -44,6 +44,21 @@ public class BusquedaController {
         return dtos;
     }
 
+    //Con id escenario
+    @GetMapping("/getEspectaculos/{idEscenario}")
+    public List<DtoEspectaculo> getEspectaculos(@PathVariable Long idEscenario) {
+        List<Espectaculo> espectaculos = this.service.getEspectaculos(idEscenario);
+        List<DtoEspectaculo> dtos = espectaculos.stream().map(e -> {
+            DtoEspectaculo dto = new DtoEspectaculo();
+            dto.setArtista(e.getArtista());
+            dto.setFecha(e.getFecha());
+            dto.setEscenario(e.getEscenario().getNombre());
+            return dto;
+        }).toList();
+
+        return dtos;
+    }
+
     @GetMapping("/getEntradas")
     public List<Entrada> getEntradas(@RequestParam Long espectaculoId) {
         return this.service.getEntradas(espectaculoId);
