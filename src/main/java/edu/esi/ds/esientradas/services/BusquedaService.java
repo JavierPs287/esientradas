@@ -48,6 +48,10 @@ public class BusquedaService {
         return this.espectaculoDAO.findByArtista(artista);
     }
 
+    public List<Espectaculo> getEspectaculos(Long idEscenario) {
+       return this.espectaculoDAO.findByEscenarioId(idEscenario);
+    }
+
     @Transactional
     public List<Entrada> getEntradas(Long espectaculoId) {
         updateEstado();
@@ -67,4 +71,6 @@ public class BusquedaService {
             }
         }
     }
+
+
 }
