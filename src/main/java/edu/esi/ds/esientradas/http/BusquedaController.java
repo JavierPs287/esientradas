@@ -35,6 +35,7 @@ public class BusquedaController {
         List<Espectaculo> espectaculos = this.service.getEspectaculos(artista);
         List<DtoEspectaculo> dtos = espectaculos.stream().map(e -> {
             DtoEspectaculo dto = new DtoEspectaculo();
+            dto.setId(e.getId());
             dto.setArtista(e.getArtista());
             dto.setFecha(e.getFecha());
             dto.setEscenario(e.getEscenario().getNombre());
@@ -50,6 +51,7 @@ public class BusquedaController {
         List<Espectaculo> espectaculos = this.service.getEspectaculos(idEscenario);
         List<DtoEspectaculo> dtos = espectaculos.stream().map(e -> {
             DtoEspectaculo dto = new DtoEspectaculo();
+            dto.setId(e.getId());
             dto.setArtista(e.getArtista());
             dto.setFecha(e.getFecha());
             dto.setEscenario(e.getEscenario().getNombre());

@@ -4,9 +4,18 @@ import java.time.LocalDateTime;
 
 public class DtoEspectaculo {
 
+    private Long id;
     private String artista;
     private LocalDateTime fecha;
     private String escenario;
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Long getId() {
+        return this.id;
+    }
 
     public void setArtista(String artista) {
        this.artista = artista;
