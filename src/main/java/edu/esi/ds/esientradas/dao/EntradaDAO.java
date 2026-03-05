@@ -20,11 +20,15 @@ public interface EntradaDAO extends JpaRepository<Entrada, Long> {
     @Modifying
     void updateEstado(@Param("idEntrada") Long idEntrada, @Param("estado") Estado estado);
 
-    @Query("SELECT COUNT(*) AS total,"+
-            "SUM(estado='DISPONIBLE') as libres," +
-            "SUM(estado='RESERVADA') as reservadas," +
-            "SUM(estado='VENDIDA') as vendidas " +
-            "FROM entrada " +
-            "WHERE espectaculo_id = :espectaculoId")
+    // TODO Solucionar consulta
+    /*@Query("""
+        SELECT 
+            COUNT(*) AS total,
+            SUM(estado='DISPONIBLE') as libres,
+            SUM(estado='RESERVADA') as reservadas,
+            SUM(estado='VENDIDA') as vendidas
+            FROM entrada 
+            WHERE espectaculo_id = :espectaculoId""")
     Object[] countEntradasByEstado(@Param("espectaculoId") Long espectaculoId);
+        */
 }
