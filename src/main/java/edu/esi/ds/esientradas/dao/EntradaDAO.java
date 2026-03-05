@@ -13,6 +13,7 @@ import jakarta.transaction.Transactional;
 
 public interface EntradaDAO extends JpaRepository<Entrada, Long> {
     List<Entrada> findByEspectaculoId(Long espectaculoId);
+    List<Entrada> findByEspectaculoIdAndEstado(Long espectaculoId, Estado disponible);
 
     @Transactional
     @Query(value = "UPDATE Entrada e SET e.estado = :estado WHERE e.id = :idEntrada")

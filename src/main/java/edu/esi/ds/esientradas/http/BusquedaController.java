@@ -70,4 +70,9 @@ public class BusquedaController {
     public String saludar(@PathVariable String nombre, @RequestParam String apellido) {
         return "Hola " + nombre + " " + apellido + ", esta es la búsqueda de entradas.";
     }
+
+    @GetMapping("/getEntradasLibres")
+    public List<Entrada> getEntradasLibres(@RequestParam Long espectaculoId) {
+        return this.service.getEntradasLibres(espectaculoId);
+    }
 }

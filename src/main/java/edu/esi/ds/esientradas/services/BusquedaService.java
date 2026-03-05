@@ -72,5 +72,9 @@ public class BusquedaService {
         }
     }
 
+    public List<Entrada> getEntradasLibres(Long espectaculoId) {
+        return this.entradaDAO.findByEspectaculoIdAndEstado(espectaculoId, Estado.DISPONIBLE);
+    }
+
 
 }
