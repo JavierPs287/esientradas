@@ -3,6 +3,8 @@ package edu.esi.ds.esientradas.http;
 import jakarta.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -12,23 +14,28 @@ import edu.esi.ds.esientradas.services.ReservasService;
 
 @RestController
 @RequestMapping("/reservas")
+@CrossOrigin(
+    origins = "http://localhost:4200",
+    allowCredentials = "true"
+)
 public class ReservasController {
 
     @Autowired
     private ReservasService reservasService;
 
-    // TODO A lo mejor conviene cambiar coger el array de entradas en lugar de ir 1 por 1
     @PutMapping("/reservar")
     public Long reservar(HttpSession session, @RequestParam Long idEntrada){
-        Long precioEntrada = this.reservasService.reservar(idEntrada, session);
-        Long precioTotal = (Long) session.getAttribute("precioTotal");
-        if(precioTotal == null){
-            precioTotal = precioEntrada;
-            session.setAttribute("precioTotal", precioTotal);
-        } else {
-            precioTotal += precioEntrada;
-            session.setAttribute("precioTotal", precioTotal);
-        }
-        return precioTotal;
+        return this.reservasService.reservar(idEntrada, session);
     }
+
+    @PutMapping("/desreservar")
+    public Long desreservar(HttpSession session, @RequestParam Long idEntrada){
+        return this.reservasService.desreservar(idEntrada, session);
+    }
+
+    @GetMapping("/precioTotal")
+    public Long getPrecioTotal(HttpSession session) {
+        return (Long) session.getAttribute("precioTotal");
+    }
+
 }
