@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import edu.esi.ds.esientradas.services.PagosService;
+import jakarta.servlet.http.HttpSession;
 
 @RestController
 @RequestMapping("/pagar")
@@ -23,14 +24,15 @@ public class PagosController {
     PagosService pagosService;
 
     @PostMapping("/prepararPago")
-    public void prepararPago(@RequestBody Map<String, Object> infoPago) {
-        Long centimos = ((Number) infoPago.get("centimos")).longValue();
-        this.pagosService.prepararPago(infoPago);
+    public String prepararPago(@RequestBody Map<String, Object> infoPago, HttpSession session) {
+        infoPago.put("centimos",session.getAttribute("precioTotal"));
+        return pagosService.prepararPago(infoPago);
     }
 
     @PostMapping("/confirmar")
-    public String confirmarPago() {
-        return this.pagosService.confirmarPago();
+    public String confirmarPago(HttpSession session) {
+        session.setAttribute("precioTotal", 0L);
+        return this.pagosService.confirmarPago(session.getId());
     }
 
 }
