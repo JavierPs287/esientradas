@@ -81,15 +81,24 @@
 			<artifactId>json</artifactId>
 			<version>20160810</version>
 		</dependency>
+
+		<!-- Source: https://mvnrepository.com/artifact/com.brevo/brevo -->
+		<dependency>
+			<groupId>com.brevo</groupId>
+			<artifactId>brevo</artifactId>
+			<version>1.1.2</version>
+			<scope>compile</scope>
+		</dependency>
+
+		<!-- Source: https://mvnrepository.com/artifact/com.stripe/stripe-java -->
+		<dependency>
+			<groupId>com.stripe</groupId>
+			<artifactId>stripe-java</artifactId>
+			<version>31.4.1</version>
+			<scope>compile</scope>
+		</dependency>
 	</dependencies>
 
-	<!-- Source: https://mvnrepository.com/artifact/com.stripe/stripe-java -->
-	<dependency>
-		<groupId>com.stripe</groupId>
-		<artifactId>stripe-java</artifactId>
-		<version>31.4.1</version>
-		<scope>compile</scope>
-	</dependency>
 
 	<build>
 		<plugins>

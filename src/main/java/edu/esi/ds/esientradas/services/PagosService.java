@@ -33,7 +33,6 @@ public class PagosService {
     @Value("${stripe.secret.key}")
     private String stripeSecretKey;
 
-    private static final String secretKey = "key";
 
     public String prepararPago(Map<String,Object> infoPago) {
         try{
