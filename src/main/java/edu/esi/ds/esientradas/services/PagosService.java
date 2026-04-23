@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.stripe.Stripe;
@@ -29,6 +30,9 @@ public class PagosService {
 
     @Autowired
     private TokenDAO tokenDAO;
+
+    @Autowired
+    private PDFService pdfService;
 
     @Value("${stripe.secret.key}")
     private String stripeSecretKey;
@@ -57,10 +61,11 @@ public class PagosService {
     }
 
 
-    //TODO quitar la logica
+    @Transactional
     public String confirmarPago(String sessionId) {
         List<Token> tokens = tokenDAO.findAllBySessionId(sessionId);
         for (Token token : tokens) {
+            pdfService.generarPdfEntrada(token.getEntrada());
             entradaDAO.updateEstado(token.getEntrada().getId(), Estado.VENDIDA);
             tokenDAO.delete(token);
         }
