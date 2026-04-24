@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 
+import org.hibernate.Hibernate;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
@@ -54,6 +55,8 @@ public class PDFService {
 	}
 
 	private byte[] crearPdf(Entrada entrada) throws IOException {
+		Entrada entradaReal = (Entrada) Hibernate.unproxy(entrada);
+
 		try (PDDocument document = new PDDocument(); ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
 			PDPage page = new PDPage(PDRectangle.A4);
 			document.addPage(page);
@@ -69,13 +72,14 @@ public class PDFService {
 				contentStream.endText();
 
 				currentY -= 40;
-				currentY = escribirLinea(contentStream, startX, currentY, "ID entrada: " + entrada.getId(), PDType1Font.HELVETICA_BOLD, 12);
-				currentY = escribirLinea(contentStream, startX, currentY, "Estado: " + entrada.getEstado(), PDType1Font.HELVETICA, 12);
-				currentY = escribirLinea(contentStream, startX, currentY, "Precio: " + formatearPrecio(entrada.getPrecio()) + " EUR", PDType1Font.HELVETICA, 12);
-				currentY = escribirLinea(contentStream, startX, currentY, "Espectaculo: " + entrada.getEspectaculo().getArtista(), PDType1Font.HELVETICA, 12);
-				currentY = escribirLinea(contentStream, startX, currentY, "Fecha: " + entrada.getEspectaculo().getFecha().format(FECHA_FORMATTER), PDType1Font.HELVETICA, 12);
-				currentY = escribirLinea(contentStream, startX, currentY, "Tipo de entrada: " + entrada.getClass().getSimpleName(), PDType1Font.HELVETICA, 12);
-				currentY = escribirLinea(contentStream, startX, currentY, describirInformacionEspecifica(entrada), PDType1Font.HELVETICA, 12);
+				currentY = escribirLinea(contentStream, startX, currentY, "ID entrada: " + entradaReal.getId(), PDType1Font.HELVETICA_BOLD, 12);
+				currentY = escribirLinea(contentStream, startX, currentY, "Estado: " + entradaReal.getEstado(), PDType1Font.HELVETICA, 12);
+				currentY = escribirLinea(contentStream, startX, currentY, "Precio: " + formatearPrecio(entradaReal.getPrecio()) + " EUR", PDType1Font.HELVETICA, 12);
+				currentY = escribirLinea(contentStream, startX, currentY, "Escenario: " + entradaReal.getEspectaculo().getArtista(), PDType1Font.HELVETICA, 12);
+				currentY = escribirLinea(contentStream, startX, currentY, "Espectaculo: " + entradaReal.getEspectaculo().getArtista(), PDType1Font.HELVETICA, 12);
+				currentY = escribirLinea(contentStream, startX, currentY, "Fecha: " + entradaReal.getEspectaculo().getFecha().format(FECHA_FORMATTER), PDType1Font.HELVETICA, 12);
+				currentY = escribirLinea(contentStream, startX, currentY, "Tipo de entrada: " + obtenerTipoEntrada(entradaReal), PDType1Font.HELVETICA, 12);
+				currentY = escribirLinea(contentStream, startX, currentY, describirInformacionEspecifica(entradaReal), PDType1Font.HELVETICA, 12);
 			}
 
 			document.save(outputStream);
@@ -102,6 +106,18 @@ public class PDFService {
 		}
 
 		return "";
+	}
+
+	private String obtenerTipoEntrada(Entrada entrada) {
+		if (entrada instanceof Precisa) {
+			return "Precisa";
+		}
+
+		if (entrada instanceof DeZona) {
+			return "DeZona";
+		}
+
+		return entrada.getClass().getSimpleName();
 	}
 
 	private String formatearPrecio(Long precioCentimos) {

@@ -29,9 +29,19 @@ public class PagosController {
     }
 
     @PostMapping("/confirmar")
-    public String confirmarPago(HttpSession session) {
+    public String confirmarPago(@RequestBody(required = false) Map<String, Object> body, HttpSession session) {
+        String correoDestino = (String) session.getAttribute("correoUsuario");
+
+        if (body != null) {
+            Object emailBody = body.get("email");
+            if (emailBody instanceof String email && !email.isBlank()) {
+                correoDestino = email;
+                session.setAttribute("correoUsuario", email);
+            }
+        }
+
         session.setAttribute("precioTotal", 0L);
-        return this.pagosService.confirmarPago(session.getId());
+        return this.pagosService.confirmarPago(session.getId(), correoDestino);
     }
 
 }

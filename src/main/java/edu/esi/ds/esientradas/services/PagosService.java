@@ -34,6 +34,9 @@ public class PagosService {
     @Autowired
     private PDFService pdfService;
 
+    @Autowired
+    private GmailEmailService gmailEmailService;
+
     @Value("${stripe.secret.key}")
     private String stripeSecretKey;
 
@@ -62,11 +65,15 @@ public class PagosService {
 
 
     @Transactional
-    public String confirmarPago(String sessionId) {
+    public String confirmarPago(String sessionId, String correoDestino) {
         List<Token> tokens = tokenDAO.findAllBySessionId(sessionId);
         for (Token token : tokens) {
-            pdfService.generarPdfEntrada(token.getEntrada());
             entradaDAO.updateEstado(token.getEntrada().getId(), Estado.VENDIDA);
+            token.getEntrada().setEstado(Estado.VENDIDA);
+            pdfService.generarPdfEntrada(token.getEntrada());
+            if (correoDestino != null && !correoDestino.isBlank()) {
+                gmailEmailService.sendPDF(correoDestino, "Tu entrada en PDF", token.getEntrada().getId());
+            }
             tokenDAO.delete(token);
         }
         return "ok";

@@ -107,11 +107,24 @@ public class GmailEmailService {
             ? "N/A"
             : pdfEntrada.getGeneradoEn().format(DATE_FORMATTER);
 
-        return "<h2>Gracias por tu compra</h2>"
-            + "<p>Te enviamos tu entrada en PDF como adjunto.</p>"
-            + "<p><strong>Entrada ID:</strong> " + pdfEntrada.getEntrada().getId() + "</p>"
-            + "<p><strong>Archivo:</strong> " + pdfEntrada.getNombreArchivo() + "</p>"
-            + "<p><strong>Generado:</strong> " + fechaGeneracion + "</p>";
+        return "<html>"
+            + "<body style='margin:0; padding:0; background-color:#d8cfbd; font-family: Arial, sans-serif;'>"
+            + "<div style='background-color:#1f2a3a; padding:15px; text-align:center;'>"
+            + "<h1 style='color:#ffffff; margin:0; font-size:20px;'>Tus entradas de ESIEntradas</h1>"
+            + "</div>"
+            + "<div style='padding:40px 20px; text-align:center;'>"
+            + "<h2 style='color:#000; font-size:28px; margin-bottom:10px;'>Gracias por tu compra</h2>"
+            + "<p style='color:#333; font-size:16px;'>La compra se ha realizado correctamente y ya tienes tu entrada en PDF adjunta.</p>"
+            + "<p style='color:#333; font-size:16px; margin:8px 0;'><strong>Entrada ID:</strong> " + pdfEntrada.getEntrada().getId() + "</p>"
+            + "<p style='color:#333; font-size:16px; margin:8px 0;'><strong>Archivo:</strong> " + pdfEntrada.getNombreArchivo() + "</p>"
+            + "<p style='color:#333; font-size:16px; margin:8px 0 30px;'><strong>Generado:</strong> " + fechaGeneracion + "</p>"
+            + "<span style='display:inline-block; padding:14px 28px; font-size:16px; font-weight:bold; color:#000; border-radius:30px; background: linear-gradient(90deg, #ff6a2b, #f7a53b); box-shadow: 0px 4px 10px rgba(0,0,0,0.2);'>"
+            + "Entrada adjunta en PDF"
+            + "</span>"
+            + "</div>"
+            + "<div style='text-align:center; padding:20px; font-size:12px; color:#555;'>© ESIEntradas - Todos los derechos reservados</div>"
+            + "</body>"
+            + "</html>";
     }
 
 }
