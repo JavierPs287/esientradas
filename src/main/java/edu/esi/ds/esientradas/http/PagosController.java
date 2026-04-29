@@ -50,6 +50,9 @@ public class PagosController {
             if (emailBody instanceof String email && !email.isBlank()) {
                 correoDestino = email;
                 session.setAttribute("correoUsuario", email);
+            } else if (body.get("userEmail") instanceof String userEmail && !userEmail.isBlank()) {
+                correoDestino = userEmail;
+                session.setAttribute("correoUsuario", userEmail);
             }
         }
 

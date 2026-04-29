@@ -44,7 +44,7 @@ public class PagosService {
 
     public String prepararPago(Map<String,Object> infoPago) {
         try{
-            Stripe.apiKey = stripeSecretKey;
+            Stripe.apiKey = stripeSecretKey.trim();
             Long centimos = ((Number) infoPago.get("centimos")).longValue();
             Long idReserva = ((Number) infoPago.get("idReserva")).longValue();
 
@@ -60,7 +60,8 @@ public class PagosService {
             return paymentIntent.getClientSecret();
 
         } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Error al preparar el pago: ");
+            System.err.println("Stripe error: " + e.getMessage());
+            throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Error al preparar el pago: " + e.getMessage());
         }
     }
 
