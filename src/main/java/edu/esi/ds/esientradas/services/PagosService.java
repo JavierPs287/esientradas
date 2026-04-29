@@ -16,6 +16,7 @@ import com.stripe.param.PaymentIntentCreateParams;
 
 import edu.esi.ds.esientradas.dao.EntradaDAO;
 import edu.esi.ds.esientradas.dao.TokenDAO;
+import edu.esi.ds.esientradas.model.Entrada;
 import edu.esi.ds.esientradas.model.Estado;
 import edu.esi.ds.esientradas.model.Token;
 
@@ -65,14 +66,17 @@ public class PagosService {
 
 
     @Transactional
-    public String confirmarPago(String sessionId, String correoDestino) {
+    public String confirmarPago(String sessionId, String correoDestino, Long userId) {
         List<Token> tokens = tokenDAO.findAllBySessionId(sessionId);
         for (Token token : tokens) {
-            entradaDAO.updateEstado(token.getEntrada().getId(), Estado.VENDIDA);
-            token.getEntrada().setEstado(Estado.VENDIDA);
-            pdfService.generarPdfEntrada(token.getEntrada());
+            Entrada entrada = token.getEntrada();
+            // Guardar userId en la entrada
+            entrada.setUserId(userId);
+            entradaDAO.updateEstado(entrada.getId(), Estado.VENDIDA);
+            entrada.setEstado(Estado.VENDIDA);
+            pdfService.generarPdfEntrada(entrada);
             if (correoDestino != null && !correoDestino.isBlank()) {
-                gmailEmailService.sendPDF(correoDestino, "Tu entrada en PDF", token.getEntrada().getId());
+                gmailEmailService.sendPDF(correoDestino, "Tu entrada en PDF", entrada.getId());
             }
             tokenDAO.delete(token);
         }

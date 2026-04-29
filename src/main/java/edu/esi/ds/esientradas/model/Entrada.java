@@ -20,6 +20,7 @@ public abstract class Entrada {
     @Id @GeneratedValue(strategy = jakarta.persistence.GenerationType.IDENTITY)
     protected Long id;
     private Long precio;     // Ojo: en céntimos de euro
+    private Long userId;     // ID del usuario que compró la entrada
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "espectaculo_id", nullable = false)
@@ -60,5 +61,13 @@ public abstract class Entrada {
 
     public void setToken(Token token) {
         this.token = token;
+    }
+
+    public Long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
     }
 }
