@@ -19,7 +19,6 @@ import edu.esi.ds.esientradas.services.BusquedaService;
 
 @RestController
 @RequestMapping("/busqueda")
-@CrossOrigin(origins = "*")
 public class BusquedaController {
 
     @Autowired

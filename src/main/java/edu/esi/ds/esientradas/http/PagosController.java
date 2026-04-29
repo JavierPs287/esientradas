@@ -14,9 +14,6 @@ import jakarta.servlet.http.HttpSession;
 
 @RestController
 @RequestMapping("/pagar")
-@CrossOrigin(origins = "http://localhost:4200",
-allowCredentials = "true"
-)
 public class PagosController {
 
     @Autowired

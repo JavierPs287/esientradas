@@ -14,10 +14,6 @@ import edu.esi.ds.esientradas.services.ReservasService;
 
 @RestController
 @RequestMapping("/reservas")
-@CrossOrigin(
-    origins = "http://localhost:4200",
-    allowCredentials = "true"
-)
 public class ReservasController {
 
     @Autowired
