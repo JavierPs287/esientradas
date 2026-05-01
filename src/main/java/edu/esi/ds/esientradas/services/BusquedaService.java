@@ -58,7 +58,15 @@ public class BusquedaService {
         entityManager.flush();  // Ejecucición delete y update
         entityManager.clear();  // Eliminación de cache para actualizar datos
         return this.entradaDAO.findByEspectaculoId(espectaculoId);
-    }    
+    }   
+    
+    @Transactional
+    public List<Entrada> getMisEntradas(Long userId) {
+        updateEstado();
+        entityManager.flush();  // Ejecucición delete y update
+        entityManager.clear();  // Eliminación de cache para actualizar datos
+        return this.entradaDAO.findByUserId(userId);
+    }
 
     //TODO Unificar
     @Transactional(propagation = Propagation.REQUIRES_NEW)

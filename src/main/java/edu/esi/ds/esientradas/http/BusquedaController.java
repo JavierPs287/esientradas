@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.PathVariable;
 
 import edu.esi.ds.esientradas.dto.DtoEspectaculo;
+import edu.esi.ds.esientradas.dto.DtoEntrada;
 import edu.esi.ds.esientradas.model.Entrada;
 import edu.esi.ds.esientradas.model.Escenario;
 import edu.esi.ds.esientradas.model.Espectaculo;
@@ -63,6 +64,20 @@ public class BusquedaController {
     @GetMapping("/getEntradas")
     public List<Entrada> getEntradas(@RequestParam Long espectaculoId) {
         return this.service.getEntradas(espectaculoId);
+    }
+
+    @GetMapping("/getMisEntradas")
+    public List<DtoEntrada> getMisEntradas(@RequestParam Long userId) {
+        List<Entrada> entradas = this.service.getMisEntradas(userId);
+        return entradas.stream().map(entrada -> {
+            return new DtoEntrada(
+                entrada.getId(),
+                entrada.getPrecio(),
+                entrada.getEspectaculo().getArtista(),
+                entrada.getEspectaculo().getFecha(),
+                entrada.getEspectaculo().getEscenario().getNombre()
+            );
+        }).toList();
     }
 
     @GetMapping("/saludar/{nombre}")
