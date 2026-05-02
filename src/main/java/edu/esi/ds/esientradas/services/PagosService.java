@@ -15,9 +15,11 @@ import com.stripe.model.PaymentIntent;
 import com.stripe.param.PaymentIntentCreateParams;
 
 import edu.esi.ds.esientradas.dao.EntradaDAO;
+import edu.esi.ds.esientradas.dao.PagoDAO;
 import edu.esi.ds.esientradas.dao.TokenDAO;
 import edu.esi.ds.esientradas.model.Entrada;
 import edu.esi.ds.esientradas.model.Estado;
+import edu.esi.ds.esientradas.model.Pago;
 import edu.esi.ds.esientradas.model.Token;
 
 @Service
@@ -31,6 +33,9 @@ public class PagosService {
 
     @Autowired
     private TokenDAO tokenDAO;
+
+    @Autowired
+    private PagoDAO pagoDAO;
 
     @Autowired
     private PDFService pdfService;
@@ -71,15 +76,20 @@ public class PagosService {
         List<Token> tokens = tokenDAO.findAllBySessionId(sessionId);
         for (Token token : tokens) {
             Entrada entrada = token.getEntrada();
+            Pago pago = new Pago();
             // Guardar userId en la entrada
             entrada.setUserId(userId);
             entradaDAO.updateEstado(entrada.getId(), Estado.VENDIDA);
             entrada.setEstado(Estado.VENDIDA);
+            pago.setCosto(entrada.getPrecio());
+            pago.setEntrada(entrada);
+            pago.setIdUsuario(userId);
             pdfService.generarPdfEntrada(entrada);
             if (correoDestino != null && !correoDestino.isBlank()) {
                 gmailEmailService.sendPDF(correoDestino, "Tu entrada en PDF", entrada.getId());
             }
             tokenDAO.delete(token);
+            pagoDAO.save(pago);
         }
         return "ok";
     }

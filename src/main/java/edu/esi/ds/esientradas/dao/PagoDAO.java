@@ -1,5 +1,9 @@
 package edu.esi.ds.esientradas.dao;
 
-public interface PagoDAO {
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import edu.esi.ds.esientradas.model.Pago;
+
+public interface PagoDAO extends JpaRepository<Pago, Long> {
 
 }
