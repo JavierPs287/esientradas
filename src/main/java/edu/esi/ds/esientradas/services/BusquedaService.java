@@ -46,7 +46,7 @@ public class BusquedaService {
     }
 
     public List<Espectaculo> getEspectaculos(String artista) {
-        return this.espectaculoDAO.findByArtista(artista);
+        return this.espectaculoDAO.findByArtistaContaining(artista);
     }
 
     public List<Espectaculo> getEspectaculos(Long idEscenario) {
