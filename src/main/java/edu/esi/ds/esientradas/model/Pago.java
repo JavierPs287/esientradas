@@ -1,5 +1,9 @@
 package edu.esi.ds.esientradas.model;
 
+import java.time.LocalDateTime;
+
+import org.springframework.cglib.core.Local;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -20,6 +24,8 @@ public class Pago {
     private Entrada entrada; // Relación con la entrada pagada
 
     private Long idUsuario; // ID del usuario que realizó el pago
+
+    private LocalDateTime fechaPago; // Fecha y hora del pago
 
     public Long getId() {
         return id;
@@ -51,5 +57,13 @@ public class Pago {
 
     public void setIdUsuario(Long idUsuario) {
         this.idUsuario = idUsuario;
+    }
+
+    public LocalDateTime getFechaPago() {
+        return fechaPago;
+    }
+
+    public void setFechaPago(LocalDateTime fechaPago) {
+        this.fechaPago = fechaPago;
     }
 }

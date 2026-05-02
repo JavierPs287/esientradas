@@ -1,5 +1,6 @@
 package edu.esi.ds.esientradas.services;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
@@ -80,6 +81,7 @@ public class PagosService {
             // Guardar userId en la entrada
             entrada.setUserId(userId);
             entradaDAO.updateEstado(entrada.getId(), Estado.VENDIDA);
+            pago.setFechaPago(LocalDateTime.now());
             entrada.setEstado(Estado.VENDIDA);
             pago.setCosto(entrada.getPrecio());
             pago.setEntrada(entrada);
