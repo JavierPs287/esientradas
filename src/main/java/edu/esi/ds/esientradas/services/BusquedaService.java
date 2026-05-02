@@ -1,6 +1,7 @@
 package edu.esi.ds.esientradas.services;
 
 import java.time.Instant;
+import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -82,6 +83,10 @@ public class BusquedaService {
 
     public List<Entrada> getEntradasLibres(Long espectaculoId) {
         return this.entradaDAO.findByEspectaculoIdAndEstado(espectaculoId, Estado.DISPONIBLE);
+    }
+
+    public List<Espectaculo> getEspectaculosPorFecha(LocalDate fecha) {
+        return this.espectaculoDAO.findByFecha(fecha);
     }
 
 

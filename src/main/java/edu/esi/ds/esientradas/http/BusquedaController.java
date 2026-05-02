@@ -1,6 +1,8 @@
 package edu.esi.ds.esientradas.http;
 
 import java.util.List;
+import java.time.LocalDate;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -88,5 +90,19 @@ public class BusquedaController {
     @GetMapping("/getEntradasLibres")
     public List<Entrada> getEntradasLibres(@RequestParam Long espectaculoId) {
         return this.service.getEntradasLibres(espectaculoId);
+    }
+
+    @GetMapping("/getEspectaculosPorFecha")
+    public List<DtoEspectaculo> getEspectaculosPorFecha(@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fecha) {
+        List<Espectaculo> espectaculos = this.service.getEspectaculosPorFecha(fecha);
+        List<DtoEspectaculo> dtos = espectaculos.stream().map(e -> {
+            DtoEspectaculo dto = new DtoEspectaculo();
+            dto.setId(e.getId());
+            dto.setArtista(e.getArtista());
+            dto.setFecha(e.getFecha());
+            dto.setEscenario(e.getEscenario().getNombre());
+            return dto;
+        }).toList();
+        return dtos;
     }
 }
