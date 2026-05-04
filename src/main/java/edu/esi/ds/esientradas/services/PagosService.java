@@ -3,6 +3,7 @@ package edu.esi.ds.esientradas.services;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -22,6 +23,7 @@ import edu.esi.ds.esientradas.model.Entrada;
 import edu.esi.ds.esientradas.model.Estado;
 import edu.esi.ds.esientradas.model.Pago;
 import edu.esi.ds.esientradas.model.Token;
+import edu.esi.ds.esientradas.dto.DtoPagoHistorial;
 
 @Service
 public class PagosService {
@@ -94,6 +96,23 @@ public class PagosService {
             pagoDAO.save(pago);
         }
         return "ok";
+    }
+
+    @Transactional(readOnly = true)
+    public List<DtoPagoHistorial> getPagosPorUsuario(Long userId) {
+        return pagoDAO.findByIdUsuarioOrderByFechaPagoDesc(userId).stream()
+                .map(pago -> {
+                    Entrada entrada = pago.getEntrada();
+                    return new DtoPagoHistorial(
+                            pago.getId(),
+                            pago.getCosto(),
+                            pago.getFechaPago(),
+                            entrada.getId(),
+                            entrada.getEspectaculo().getArtista(),
+                            entrada.getEspectaculo().getFecha(),
+                            entrada.getEspectaculo().getEscenario().getNombre());
+                })
+                .collect(Collectors.toList());
     }
 
 }

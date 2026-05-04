@@ -1,13 +1,17 @@
 package edu.esi.ds.esientradas.http;
 
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import edu.esi.ds.esientradas.dto.DtoPagoHistorial;
 import edu.esi.ds.esientradas.services.PagosService;
 import jakarta.servlet.http.HttpSession;
 
@@ -57,6 +61,11 @@ public class PagosController {
 
         session.setAttribute("precioTotal", 0L);
         return this.pagosService.confirmarPago(session.getId(), correoDestino, userId);
+    }
+
+    @GetMapping("/getMisPagos")
+    public List<DtoPagoHistorial> getMisPagos(@RequestParam Long userId) {
+        return this.pagosService.getPagosPorUsuario(userId);
     }
 
 }
