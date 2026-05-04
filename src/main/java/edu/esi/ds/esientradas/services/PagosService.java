@@ -79,21 +79,25 @@ public class PagosService {
         List<Token> tokens = tokenDAO.findAllBySessionId(sessionId);
         for (Token token : tokens) {
             Entrada entrada = token.getEntrada();
-            Pago pago = new Pago();
-            // Guardar userId en la entrada
+
+            // ✅ Solo dirty checking, sin bulk UPDATE
             entrada.setUserId(userId);
-            entradaDAO.updateEstado(entrada.getId(), Estado.VENDIDA);
+            entrada.setEstado(Estado.VENDIDA);  // ← Hibernate hace el UPDATE al final del método
+            entradaDAO.save(entrada);           // ← fuerza flush inmediato de esta entidad
+
+            Pago pago = new Pago();
             pago.setFechaPago(LocalDateTime.now());
-            entrada.setEstado(Estado.VENDIDA);
             pago.setCosto(entrada.getPrecio());
             pago.setEntrada(entrada);
             pago.setIdUsuario(userId);
+
+            pagoDAO.save(pago);
+            tokenDAO.delete(token);
+
             pdfService.generarPdfEntrada(entrada);
             if (correoDestino != null && !correoDestino.isBlank()) {
                 gmailEmailService.sendPDF(correoDestino, "Tu entrada en PDF", entrada.getId());
             }
-            tokenDAO.delete(token);
-            pagoDAO.save(pago);
         }
         return "ok";
     }
