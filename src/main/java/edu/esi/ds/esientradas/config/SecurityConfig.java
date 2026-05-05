@@ -28,11 +28,18 @@ public class SecurityConfig {
             .cors(Customizer.withDefaults())
             .csrf(csrf -> csrf.disable()) // Modificado: CSRF deshabilitado ya que allowCredentials es false
             .authorizeHttpRequests(auth -> auth
-                .anyRequest().permitAll()
+                .requestMatchers(
+                    "/compras/**",
+                    "/busqueda/**",
+                    "/pagar/**",
+                    "/reservas/**",
+                    "/escenarios/**"
+                ).permitAll()
+                .anyRequest().denyAll()
             )
             .sessionManagement(session -> session
-                .sessionFixation().none()  // ← no regenerar el ID de sesión
-            );;
+                .sessionFixation(sessionFixation -> sessionFixation.migrateSession())
+            );
         
         return http.build();
     }

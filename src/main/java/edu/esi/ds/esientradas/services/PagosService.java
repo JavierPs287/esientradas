@@ -51,11 +51,19 @@ public class PagosService {
     @Autowired
     private GmailEmailService gmailEmailService;
 
+    @Autowired
+    private UsuarioService usuarioService;
+
     @Value("${stripe.secret.key}")
     private String stripeSecretKey;
 
 
     public String prepararPago(Map<String,Object> infoPago) {
+
+        if (!infoPago.containsKey("token") || infoPago.get("token") == null || String.valueOf(infoPago.get("token")).isBlank()) {
+            logger.error("Falta token en la solicitud de prepararPago");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "token es requerido");
+        }
 
         if (!infoPago.containsKey("userId") || infoPago.get("userId") == null) {
             logger.error("Falta userId en la solicitud de prepararPago");
@@ -73,10 +81,14 @@ public class PagosService {
 
         try{
             Stripe.apiKey = stripeSecretKey.trim();
+            String token = String.valueOf(infoPago.get("token"));
+            Long userId = ((Number) infoPago.get("userId")).longValue();
             Long centimos = ((Number) infoPago.get("centimos")).longValue();
             Long idReserva = ((Number) infoPago.get("idReserva")).longValue();
 
-            logger.info("Preparando pago para userId={}, centimos={}, idReserva={}", infoPago.get("userId"), centimos, idReserva);
+            usuarioService.validateUserAccess(token, userId);
+
+            logger.info("Preparando pago para userId={}, centimos={}, idReserva={}", userId, centimos, idReserva);
             PaymentIntentCreateParams params = 
                 PaymentIntentCreateParams.builder()
                     .setAmount(centimos)
@@ -132,6 +144,17 @@ public class PagosService {
         Long userId = ((Number) body.get("userId")).longValue();
 
         String tokenUsuario = String.valueOf(body.get("token"));
+        String emailSesion = usuarioService.checkToken(tokenUsuario);
+        usuarioService.validateUserAccess(tokenUsuario, userId);
+
+        if (correoDestino != null && !correoDestino.equalsIgnoreCase(emailSesion)) {
+            logger.error("Correo de destino no corresponde al usuario autenticado para userId={}", userId);
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "No puedes usar un correo distinto al de tu cuenta");
+        }
+
+        if (correoDestino == null) {
+            correoDestino = emailSesion;
+        }
 
         List<Token> tokens = tokenDAO.findAllByTokenUsuario(tokenUsuario);
         for (Token token : tokens) {
