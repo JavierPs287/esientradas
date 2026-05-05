@@ -27,51 +27,12 @@ public class PagosController {
 
     @PostMapping("/prepararPago")
     public String prepararPago(@RequestBody Map<String, Object> infoPago) {
-        if (!infoPago.containsKey("userId") || infoPago.get("userId") == null) {
-            throw new org.springframework.web.server.ResponseStatusException(
-                org.springframework.http.HttpStatus.BAD_REQUEST, 
-                "userId es requerido");
-        }
-
-        if (!infoPago.containsKey("centimos") || infoPago.get("centimos") == null) {
-            throw new org.springframework.web.server.ResponseStatusException(
-                org.springframework.http.HttpStatus.BAD_REQUEST,
-                "centimos es requerido");
-        }
-
         return pagosService.prepararPago(infoPago);
     }
 
     @PostMapping("/confirmar")
     public String confirmarPago(@RequestBody(required = false) Map<String, Object> body) {
-        if (body == null) {
-            throw new org.springframework.web.server.ResponseStatusException(
-                org.springframework.http.HttpStatus.BAD_REQUEST,
-                "Body vacio");
-        }
-
-        if (!body.containsKey("token") || body.get("token") == null || String.valueOf(body.get("token")).isBlank()) {
-            throw new org.springframework.web.server.ResponseStatusException(
-                org.springframework.http.HttpStatus.BAD_REQUEST,
-                "token es requerido");
-        }
-
-        if (!body.containsKey("userId") || body.get("userId") == null) {
-            throw new org.springframework.web.server.ResponseStatusException(
-                org.springframework.http.HttpStatus.BAD_REQUEST,
-                "userId es requerido");
-        }
-
-        String correoDestino = null;
-        Object emailBody = body.get("email");
-        if (emailBody instanceof String email && !email.isBlank()) {
-            correoDestino = email;
-        } else if (body.get("userEmail") instanceof String userEmail && !userEmail.isBlank()) {
-            correoDestino = userEmail;
-        }
-
-        Long userId = ((Number) body.get("userId")).longValue();
-        return this.pagosService.confirmarPago(String.valueOf(body.get("token")), correoDestino, userId);
+        return this.pagosService.confirmarPago(body);
     }
 
     @GetMapping("/getMisPagos")

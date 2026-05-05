@@ -51,6 +51,19 @@ public class PagosService {
 
 
     public String prepararPago(Map<String,Object> infoPago) {
+
+        if (!infoPago.containsKey("userId") || infoPago.get("userId") == null) {
+            throw new org.springframework.web.server.ResponseStatusException(
+                org.springframework.http.HttpStatus.BAD_REQUEST, 
+                "userId es requerido");
+        }
+
+        if (!infoPago.containsKey("centimos") || infoPago.get("centimos") == null) {
+            throw new org.springframework.web.server.ResponseStatusException(
+                org.springframework.http.HttpStatus.BAD_REQUEST,
+                "centimos es requerido");
+        }
+
         try{
             Stripe.apiKey = stripeSecretKey.trim();
             Long centimos = ((Number) infoPago.get("centimos")).longValue();
@@ -75,7 +88,38 @@ public class PagosService {
 
 
     @Transactional
-    public String confirmarPago(String tokenUsuario, String correoDestino, Long userId) {
+    public String confirmarPago(Map<String, Object> body) {
+        
+        if (body == null) {
+            throw new org.springframework.web.server.ResponseStatusException(
+                org.springframework.http.HttpStatus.BAD_REQUEST,
+                "Body vacio");
+        }
+
+        if (!body.containsKey("token") || body.get("token") == null || String.valueOf(body.get("token")).isBlank()) {
+            throw new org.springframework.web.server.ResponseStatusException(
+                org.springframework.http.HttpStatus.BAD_REQUEST,
+                "token es requerido");
+        }
+
+        if (!body.containsKey("userId") || body.get("userId") == null) {
+            throw new org.springframework.web.server.ResponseStatusException(
+                org.springframework.http.HttpStatus.BAD_REQUEST,
+                "userId es requerido");
+        }
+
+        String correoDestino = null;
+        Object emailBody = body.get("email");
+        if (emailBody instanceof String email && !email.isBlank()) {
+            correoDestino = email;
+        } else if (body.get("userEmail") instanceof String userEmail && !userEmail.isBlank()) {
+            correoDestino = userEmail;
+        }
+
+        Long userId = ((Number) body.get("userId")).longValue();
+
+        String tokenUsuario = String.valueOf(body.get("token"));
+
         List<Token> tokens = tokenDAO.findAllByTokenUsuario(tokenUsuario);
         for (Token token : tokens) {
             Entrada entrada = token.getEntrada();
