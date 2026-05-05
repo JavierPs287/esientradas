@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import edu.esi.ds.esientradas.dto.DtoPagoHistorial;
 import edu.esi.ds.esientradas.services.PagosService;
+import edu.esi.ds.esientradas.services.UsuarioService;
 
 @RestController
 @RequestMapping("/pagar")
@@ -20,6 +21,9 @@ public class PagosController {
 
     @Autowired
     PagosService pagosService;
+
+    @Autowired
+    private UsuarioService usuarioService;
 
     @PostMapping("/prepararPago")
     public String prepararPago(@RequestBody Map<String, Object> infoPago) {
@@ -71,7 +75,8 @@ public class PagosController {
     }
 
     @GetMapping("/getMisPagos")
-    public List<DtoPagoHistorial> getMisPagos(@RequestParam Long userId) {
+    public List<DtoPagoHistorial> getMisPagos(@RequestParam Long userId, @RequestParam String token) {
+        this.usuarioService.validateUserAccess(token, userId);
         return this.pagosService.getPagosPorUsuario(userId);
     }
 

@@ -18,6 +18,7 @@ import edu.esi.ds.esientradas.model.Escenario;
 import edu.esi.ds.esientradas.model.Espectaculo;
 
 import edu.esi.ds.esientradas.services.BusquedaService;
+import edu.esi.ds.esientradas.services.UsuarioService;
 
 @RestController
 @RequestMapping("/busqueda")
@@ -25,6 +26,9 @@ public class BusquedaController {
 
     @Autowired
     private BusquedaService service;
+
+    @Autowired
+    private UsuarioService usuarioService;
 
     @GetMapping("/getEscenarios")
     public List<Escenario> getEscenarios() {
@@ -68,7 +72,8 @@ public class BusquedaController {
     }
 
     @GetMapping("/getMisEntradas")
-    public List<DtoEntrada> getMisEntradas(@RequestParam Long userId) {
+    public List<DtoEntrada> getMisEntradas(@RequestParam Long userId, @RequestParam String token) {
+        this.usuarioService.validateUserAccess(token, userId);
         List<Entrada> entradas = this.service.getMisEntradas(userId);
         return entradas.stream().map(entrada -> {
             return new DtoEntrada(
@@ -81,10 +86,10 @@ public class BusquedaController {
         }).toList();
     }
 
-    @GetMapping("/saludar/{nombre}")
-    public String saludar(@PathVariable String nombre, @RequestParam String apellido) {
-        return "Hola " + nombre + " " + apellido + ", esta es la búsqueda de entradas.";
-    }
+    // @GetMapping("/saludar/{nombre}")
+    // public String saludar(@PathVariable String nombre, @RequestParam String apellido) {
+    //     return "Hola " + nombre + " " + apellido + ", esta es la búsqueda de entradas.";
+    // }
 
     @GetMapping("/getEntradasLibres")
     public List<Entrada> getEntradasLibres(@RequestParam Long espectaculoId) {
