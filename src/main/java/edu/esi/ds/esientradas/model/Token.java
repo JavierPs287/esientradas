@@ -22,7 +22,7 @@ public class Token {
     @JoinColumn(name = "entrada_id", referencedColumnName = "id")
     private Entrada entrada;
 
-    private String sessionId;
+    private String tokenUsuario;
 
     public Token() {
         this.valor = UUID.randomUUID().toString();
@@ -41,16 +41,16 @@ public class Token {
         return entrada;
     }
 
-    public String getSessionId() {
-        return sessionId;
+    public String getTokenUsuario() {
+        return tokenUsuario;
     }
 
     public void setEntrada(Entrada entrada) {
         this.entrada = entrada;
     }
 
-    public void setSessionId(String sessionId) {
-        this.sessionId = sessionId;
+    public void setTokenUsuario(String tokenUsuario) {
+        this.tokenUsuario = tokenUsuario;
     }
 
 }

@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import edu.esi.ds.esientradas.dto.DtoPagoHistorial;
 import edu.esi.ds.esientradas.services.PagosService;
-import jakarta.servlet.http.HttpSession;
 
 @RestController
 @RequestMapping("/pagar")
@@ -23,44 +22,52 @@ public class PagosController {
     PagosService pagosService;
 
     @PostMapping("/prepararPago")
-    public String prepararPago(@RequestBody Map<String, Object> infoPago, HttpSession session) {
-        // Validar que el userId viene en la request
+    public String prepararPago(@RequestBody Map<String, Object> infoPago) {
         if (!infoPago.containsKey("userId") || infoPago.get("userId") == null) {
             throw new org.springframework.web.server.ResponseStatusException(
                 org.springframework.http.HttpStatus.BAD_REQUEST, 
                 "userId es requerido");
         }
-        
-        infoPago.put("centimos",session.getAttribute("precioTotal"));
+
+        if (!infoPago.containsKey("centimos") || infoPago.get("centimos") == null) {
+            throw new org.springframework.web.server.ResponseStatusException(
+                org.springframework.http.HttpStatus.BAD_REQUEST,
+                "centimos es requerido");
+        }
+
         return pagosService.prepararPago(infoPago);
     }
 
     @PostMapping("/confirmar")
-    public String confirmarPago(@RequestBody(required = false) Map<String, Object> body, HttpSession session) {
-        String correoDestino = (String) session.getAttribute("correoUsuario");
-        Long userId = null;
-
-        if (body != null) {
-            // Validar que el userId viene en la request
-            if (!body.containsKey("userId") || body.get("userId") == null) {
-                throw new org.springframework.web.server.ResponseStatusException(
-                    org.springframework.http.HttpStatus.BAD_REQUEST, 
-                    "userId es requerido");
-            }
-            userId = ((Number) body.get("userId")).longValue();
-            
-            Object emailBody = body.get("email");
-            if (emailBody instanceof String email && !email.isBlank()) {
-                correoDestino = email;
-                session.setAttribute("correoUsuario", email);
-            } else if (body.get("userEmail") instanceof String userEmail && !userEmail.isBlank()) {
-                correoDestino = userEmail;
-                session.setAttribute("correoUsuario", userEmail);
-            }
+    public String confirmarPago(@RequestBody(required = false) Map<String, Object> body) {
+        if (body == null) {
+            throw new org.springframework.web.server.ResponseStatusException(
+                org.springframework.http.HttpStatus.BAD_REQUEST,
+                "Body vacio");
         }
 
-        session.setAttribute("precioTotal", 0L);
-        return this.pagosService.confirmarPago(session.getId(), correoDestino, userId);
+        if (!body.containsKey("token") || body.get("token") == null || String.valueOf(body.get("token")).isBlank()) {
+            throw new org.springframework.web.server.ResponseStatusException(
+                org.springframework.http.HttpStatus.BAD_REQUEST,
+                "token es requerido");
+        }
+
+        if (!body.containsKey("userId") || body.get("userId") == null) {
+            throw new org.springframework.web.server.ResponseStatusException(
+                org.springframework.http.HttpStatus.BAD_REQUEST,
+                "userId es requerido");
+        }
+
+        String correoDestino = null;
+        Object emailBody = body.get("email");
+        if (emailBody instanceof String email && !email.isBlank()) {
+            correoDestino = email;
+        } else if (body.get("userEmail") instanceof String userEmail && !userEmail.isBlank()) {
+            correoDestino = userEmail;
+        }
+
+        Long userId = ((Number) body.get("userId")).longValue();
+        return this.pagosService.confirmarPago(String.valueOf(body.get("token")), correoDestino, userId);
     }
 
     @GetMapping("/getMisPagos")

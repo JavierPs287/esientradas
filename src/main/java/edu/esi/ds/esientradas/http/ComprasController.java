@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import edu.esi.ds.esientradas.services.UsuarioService;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
 
 @RestController
 @RequestMapping("/compras")
@@ -22,9 +21,8 @@ public class ComprasController {
     private UsuarioService usuarioService;
 
     @PutMapping("/comprar")
-    public String comprar(HttpSession session,HttpServletResponse response, @RequestParam String userToken) throws IOException{
-        String sessionId = session.getId();
-        if(sessionId == null || sessionId.isEmpty()){
+    public String comprar(HttpServletResponse response, @RequestParam String userToken) throws IOException{
+        if(userToken == null || userToken.isBlank()){
             response.sendRedirect("https://www.uclm.es/");
             return "";
         }

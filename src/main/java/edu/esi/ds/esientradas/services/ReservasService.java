@@ -1,6 +1,5 @@
 package edu.esi.ds.esientradas.services;
 
-import jakarta.servlet.http.HttpSession;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 
@@ -34,16 +33,15 @@ public class ReservasService {
     private EntityManager entityManager;
 
     @Transactional
-    public Long reservar(Long idEntrada, HttpSession session) {
+    public Long reservar(Long idEntrada, String tokenUsuario) {
         updateEstado();
 
         Entrada entrada = this.entradaDAO.findById(idEntrada).orElseThrow(
                 () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Entrada no encontrada"));
 
-        String sessionId = session.getId();
         // Comprobamos si la entrada ya la habia reservado el mismo user
-        if (this.tokenDAO.existsBySessionIdAndEntradaId(sessionId, idEntrada)) {
-            return getTotalSesion(session);
+        if (this.tokenDAO.existsByTokenUsuarioAndEntradaId(tokenUsuario, idEntrada)) {
+            return getTotalToken(tokenUsuario);
         }
 
         if (entrada.getEstado() != Estado.DISPONIBLE) {
@@ -52,25 +50,22 @@ public class ReservasService {
 
         Token token = new Token();
         token.setEntrada(entrada);
-        token.setSessionId(sessionId);
+        token.setTokenUsuario(tokenUsuario);
         this.tokenDAO.save(token);
 
         this.entradaDAO.updateEstado(idEntrada, Estado.RESERVADA);
-        long total = getTotalSesion(session) + entrada.getPrecio();
-        session.setAttribute("precioTotal", total);
-        return total;
+        return getTotalToken(tokenUsuario) + entrada.getPrecio();
     }
 
     @Transactional
-    public Long desreservar(Long idEntrada, HttpSession session) {
+    public Long desreservar(Long idEntrada, String tokenUsuario) {
         updateEstado();
 
-        String sessionId = session.getId();
-        Optional<Token> tokenOpt = tokenDAO.findBySessionIdAndEntradaId(sessionId, idEntrada);
+        Optional<Token> tokenOpt = tokenDAO.findByTokenUsuarioAndEntradaId(tokenUsuario, idEntrada);
 
         // Si no existe el token, la entrada no esta reservada por lo que no se desreserva (devolvemos el precio total actual)
         if (tokenOpt.isEmpty()) {
-            return getTotalSesion(session);
+            return getTotalToken(tokenUsuario);
         }
 
         Token token = tokenOpt.get();
@@ -78,9 +73,15 @@ public class ReservasService {
         this.tokenDAO.delete(token);
         this.entradaDAO.updateEstado(idEntrada, Estado.DISPONIBLE);
 
-        long total = Math.max(0L, getTotalSesion(session) - precioEntrada);
-        session.setAttribute("precioTotal", total);
+        long total = Math.max(0L, getTotalToken(tokenUsuario) - precioEntrada);
         return total;
+    }
+
+    @Transactional(readOnly = true)
+    public Long getTotalToken(String tokenUsuario) {
+        return this.tokenDAO.findAllByTokenUsuario(tokenUsuario).stream()
+                .mapToLong(token -> token.getEntrada().getPrecio())
+                .sum();
     }
 
     // TODO Unificar
@@ -97,8 +98,4 @@ public class ReservasService {
         entityManager.clear(); // Eliminación de cache para actualizar datos
     }
 
-    private Long getTotalSesion(HttpSession session) {
-        Long total = (Long) session.getAttribute("precioTotal");
-        return total == null ? 0L : total;
-    }
 }

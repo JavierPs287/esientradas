@@ -75,8 +75,8 @@ public class PagosService {
 
 
     @Transactional
-    public String confirmarPago(String sessionId, String correoDestino, Long userId) {
-        List<Token> tokens = tokenDAO.findAllBySessionId(sessionId);
+    public String confirmarPago(String tokenUsuario, String correoDestino, Long userId) {
+        List<Token> tokens = tokenDAO.findAllByTokenUsuario(tokenUsuario);
         for (Token token : tokens) {
             Entrada entrada = token.getEntrada();
 
