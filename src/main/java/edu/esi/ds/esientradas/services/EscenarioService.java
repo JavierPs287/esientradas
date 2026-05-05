@@ -16,6 +16,14 @@ public class EscenarioService {
     private EscenarioDAO dao;
 
     public void insertarEscenario(Escenario escenario) {
+
+        if(escenario.getNombre() == null || escenario.getNombre().isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El nombre del escenario no puede ser nulo o vacío");
+        }
+        if(escenario.getDescripcion() == null || escenario.getDescripcion().isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "La descripción del escenario no puede ser nula o vacía");
+        }
+
         try{
             this.dao.save(escenario);
         }catch(DataIntegrityViolationException e) {
