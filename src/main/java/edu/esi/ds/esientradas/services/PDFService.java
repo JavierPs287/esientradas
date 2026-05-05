@@ -24,9 +24,13 @@ import edu.esi.ds.esientradas.model.Entrada;
 import edu.esi.ds.esientradas.model.PDFEntrada;
 import edu.esi.ds.esientradas.model.Precisa;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 @Service
 public class PDFService {
 
+	private static final Logger logger = LoggerFactory.getLogger(PDFService.class);
 	private static final DateTimeFormatter FECHA_FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
 
 	@Autowired
@@ -35,6 +39,7 @@ public class PDFService {
 	@Transactional
 	public PDFEntrada generarPdfEntrada(Entrada entrada) {
 		try {
+			logger.info("Generando PDF para la entrada con ID: {}", entrada.getId());
 			byte[] contenido = crearPdf(entrada);
 
 			PDFEntrada pdfEntrada = new PDFEntrada();
@@ -43,14 +48,17 @@ public class PDFService {
 			pdfEntrada.setNombreArchivo(construirNombreArchivo(entrada));
 			pdfEntrada.setGeneradoEn(LocalDateTime.now());
 
+			logger.info("PDF generado para la entrada con ID: {}", entrada.getId());
 			return pdfDAO.save(pdfEntrada);
 		} catch (IOException e) {
+			logger.error("Error al generar PDF para la entrada con ID: {}", entrada.getId(), e);
 			throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "No se pudo generar el PDF de la entrada", e);
 		}
 	}
 
 	@Transactional(readOnly = true)
 	public Optional<PDFEntrada> obtenerPdfPorEntradaId(Long entradaId) {
+		logger.info("Obteniendo PDF para la entrada con ID: {}", entradaId);
 		return pdfDAO.findByEntradaId(entradaId);
 	}
 
@@ -60,6 +68,7 @@ public class PDFService {
 		try (PDDocument document = new PDDocument(); ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
 			PDPage page = new PDPage(PDRectangle.A4);
 			document.addPage(page);
+			logger.info("Creando contenido del PDF para la entrada con ID: {}", entradaReal.getId());
 
 			try (PDPageContentStream contentStream = new PDPageContentStream(document, page)) {
 				float startX = 50;
@@ -83,6 +92,7 @@ public class PDFService {
 			}
 
 			document.save(outputStream);
+			logger.info("PDF creado exitosamente para la entrada con ID: {}", entradaReal.getId());
 			return outputStream.toByteArray();
 		}
 	}
@@ -93,6 +103,7 @@ public class PDFService {
 		contentStream.newLineAtOffset(startX, currentY);
 		contentStream.showText(texto);
 		contentStream.endText();
+		logger.debug("Escribiendo línea en PDF: {}", texto);
 		return currentY - 24;
 	}
 

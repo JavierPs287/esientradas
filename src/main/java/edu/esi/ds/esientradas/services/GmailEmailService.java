@@ -28,10 +28,15 @@ import jakarta.mail.internet.MimeMultipart;
 import jakarta.mail.internet.MimeMessage;
 import jakarta.mail.util.ByteArrayDataSource;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 @Service
 public class GmailEmailService {
 
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+
+    private static final Logger logger = LoggerFactory.getLogger(GmailEmailService.class);
 
     private final String username;
     private final String appPassword;
@@ -51,6 +56,7 @@ public class GmailEmailService {
 
     public void sendPDFEmail(String to, String subject, String htmlContent, byte[] pdfContent, String pdfFileName) throws MessagingException {
         Properties props = new Properties();
+        logger.info("Configurando propiedades SMTP para Gmail");
         props.put("mail.smtp.auth", "true");
         props.put("mail.smtp.starttls.enable", "true");
         props.put("mail.smtp.host", "smtp.gmail.com");
@@ -73,17 +79,20 @@ public class GmailEmailService {
 
         MimeBodyPart htmlPart = new MimeBodyPart();
         htmlPart.setContent(htmlContent, "text/html; charset=UTF-8");
+        logger.info("Contenido HTML del email preparado");
 
         MimeBodyPart pdfPart = new MimeBodyPart();
         DataSource source = new ByteArrayDataSource(pdfContent, "application/pdf");
         pdfPart.setDataHandler(new DataHandler(source));
         pdfPart.setFileName(pdfFileName);
+        logger.info("Adjunto PDF preparado con nombre: {}", pdfFileName);
 
         Multipart multipart = new MimeMultipart();
         multipart.addBodyPart(htmlPart);
         multipart.addBodyPart(pdfPart);
 
         message.setContent(multipart);
+        logger.info("Email formado con contenido y PDF, enviando a: {}", to);
 
         Transport.send(message);
     }
@@ -97,7 +106,9 @@ public class GmailEmailService {
 
         try {
             sendPDFEmail(to, subject, htmlContent, pdfEntrada.getContenido(), pdfEntrada.getNombreArchivo());
+            logger.info("Email con PDF enviado correctamente a: {}", to);
         } catch (MessagingException e) {
+            logger.error("Error al enviar email con PDF a {}: {}", to, e.getMessage());
             throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "No se pudo enviar el email con el PDF", e);
         }
     }
