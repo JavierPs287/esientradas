@@ -17,6 +17,8 @@ import edu.esi.ds.esientradas.model.Estado;
 import edu.esi.ds.esientradas.dao.EscenarioDAO;
 import edu.esi.ds.esientradas.dao.EspectaculoDAO;
 import edu.esi.ds.esientradas.dao.TokenDAO;
+import edu.esi.ds.esientradas.dto.DtoEntrada;
+import edu.esi.ds.esientradas.dto.DtoEspectaculo;
 import edu.esi.ds.esientradas.dao.EntradaDAO;
 
 import jakarta.persistence.EntityManager;
@@ -45,12 +47,30 @@ public class BusquedaService {
         return this.escenarioDAO.findAll();
     }
 
-    public List<Espectaculo> getEspectaculos(String artista) {
-        return this.espectaculoDAO.findByArtistaContaining(artista);
+    public List<DtoEspectaculo> getEspectaculos(String artista) {
+        List<Espectaculo> espectaculos = this.espectaculoDAO.findByArtistaContaining(artista);
+        List<DtoEspectaculo> dtos = espectaculos.stream().map(e -> {
+            DtoEspectaculo dto = new DtoEspectaculo();
+            dto.setId(e.getId());
+            dto.setArtista(e.getArtista());
+            dto.setFecha(e.getFecha());
+            dto.setEscenario(e.getEscenario().getNombre());
+            return dto;
+        }).toList();
+        return dtos;
     }
 
-    public List<Espectaculo> getEspectaculos(Long idEscenario) {
-       return this.espectaculoDAO.findByEscenarioId(idEscenario);
+    public List<DtoEspectaculo> getEspectaculos(Long idEscenario) {
+        List<Espectaculo> espectaculos = this.espectaculoDAO.findByEscenarioId(idEscenario);
+        List<DtoEspectaculo> dtos = espectaculos.stream().map(e -> {
+            DtoEspectaculo dto = new DtoEspectaculo();
+            dto.setId(e.getId());
+            dto.setArtista(e.getArtista());
+            dto.setFecha(e.getFecha());
+            dto.setEscenario(e.getEscenario().getNombre());
+            return dto;
+        }).toList();
+        return dtos;
     }
 
     @Transactional
@@ -62,11 +82,21 @@ public class BusquedaService {
     }   
     
     @Transactional
-    public List<Entrada> getMisEntradas(Long userId) {
+    public List<DtoEntrada> getMisEntradas(Long userId) {
         updateEstado();
         entityManager.flush();  // Ejecucición delete y update
         entityManager.clear();  // Eliminación de cache para actualizar datos
-        return this.entradaDAO.findByUserId(userId);
+        List<Entrada> entradas = this.entradaDAO.findByUserId(userId);
+
+        return entradas.stream().map(entrada -> {
+            return new DtoEntrada(
+                entrada.getId(),
+                entrada.getPrecio(),
+                entrada.getEspectaculo().getArtista(),
+                entrada.getEspectaculo().getFecha(),
+                entrada.getEspectaculo().getEscenario().getNombre()
+            );
+        }).toList();
     }
 
     //TODO Unificar
@@ -85,8 +115,17 @@ public class BusquedaService {
         return this.entradaDAO.findByEspectaculoIdAndEstado(espectaculoId, Estado.DISPONIBLE);
     }
 
-    public List<Espectaculo> getEspectaculosPorFecha(LocalDate fecha) {
-        return this.espectaculoDAO.findByFecha(fecha);
+    public List<DtoEspectaculo> getEspectaculosPorFecha(LocalDate fecha) {
+        List<Espectaculo> espectaculos = this.espectaculoDAO.findByFecha(fecha);
+        List<DtoEspectaculo> dtos = espectaculos.stream().map(e -> {
+            DtoEspectaculo dto = new DtoEspectaculo();
+            dto.setId(e.getId());
+            dto.setArtista(e.getArtista());
+            dto.setFecha(e.getFecha());
+            dto.setEscenario(e.getEscenario().getNombre());
+            return dto;
+        }).toList();
+        return dtos;
     }
 
 

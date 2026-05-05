@@ -15,7 +15,6 @@ import edu.esi.ds.esientradas.dto.DtoEspectaculo;
 import edu.esi.ds.esientradas.dto.DtoEntrada;
 import edu.esi.ds.esientradas.model.Entrada;
 import edu.esi.ds.esientradas.model.Escenario;
-import edu.esi.ds.esientradas.model.Espectaculo;
 
 import edu.esi.ds.esientradas.services.BusquedaService;
 import edu.esi.ds.esientradas.services.UsuarioService;
@@ -37,33 +36,13 @@ public class BusquedaController {
 
     @GetMapping("/getEspectaculos")
     public List<DtoEspectaculo> getEspectaculos(@RequestParam String artista) {
-        List<Espectaculo> espectaculos = this.service.getEspectaculos(artista);
-        List<DtoEspectaculo> dtos = espectaculos.stream().map(e -> {
-            DtoEspectaculo dto = new DtoEspectaculo();
-            dto.setId(e.getId());
-            dto.setArtista(e.getArtista());
-            dto.setFecha(e.getFecha());
-            dto.setEscenario(e.getEscenario().getNombre());
-            return dto;
-        }).toList();
-
-        return dtos;
+        return this.service.getEspectaculos(artista);
     }
 
     //Con id escenario
     @GetMapping("/getEspectaculos/{idEscenario}")
     public List<DtoEspectaculo> getEspectaculos(@PathVariable Long idEscenario) {
-        List<Espectaculo> espectaculos = this.service.getEspectaculos(idEscenario);
-        List<DtoEspectaculo> dtos = espectaculos.stream().map(e -> {
-            DtoEspectaculo dto = new DtoEspectaculo();
-            dto.setId(e.getId());
-            dto.setArtista(e.getArtista());
-            dto.setFecha(e.getFecha());
-            dto.setEscenario(e.getEscenario().getNombre());
-            return dto;
-        }).toList();
-
-        return dtos;
+        return this.service.getEspectaculos(idEscenario);
     }
 
     @GetMapping("/getEntradas")
@@ -74,16 +53,7 @@ public class BusquedaController {
     @GetMapping("/getMisEntradas")
     public List<DtoEntrada> getMisEntradas(@RequestParam Long userId, @RequestParam String token) {
         this.usuarioService.validateUserAccess(token, userId);
-        List<Entrada> entradas = this.service.getMisEntradas(userId);
-        return entradas.stream().map(entrada -> {
-            return new DtoEntrada(
-                entrada.getId(),
-                entrada.getPrecio(),
-                entrada.getEspectaculo().getArtista(),
-                entrada.getEspectaculo().getFecha(),
-                entrada.getEspectaculo().getEscenario().getNombre()
-            );
-        }).toList();
+        return this.service.getMisEntradas(userId);
     }
 
     // @GetMapping("/saludar/{nombre}")
@@ -98,15 +68,6 @@ public class BusquedaController {
 
     @GetMapping("/getEspectaculosPorFecha")
     public List<DtoEspectaculo> getEspectaculosPorFecha(@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fecha) {
-        List<Espectaculo> espectaculos = this.service.getEspectaculosPorFecha(fecha);
-        List<DtoEspectaculo> dtos = espectaculos.stream().map(e -> {
-            DtoEspectaculo dto = new DtoEspectaculo();
-            dto.setId(e.getId());
-            dto.setArtista(e.getArtista());
-            dto.setFecha(e.getFecha());
-            dto.setEscenario(e.getEscenario().getNombre());
-            return dto;
-        }).toList();
-        return dtos;
+        return this.service.getEspectaculosPorFecha(fecha);
     }
 }
