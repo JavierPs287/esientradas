@@ -22,6 +22,7 @@ public class SecurityConfig {
                     "/busqueda/**",
                     "/pagar/**",
                     "/reservas/**",
+                    "/cola/**",
                     "/escenarios/**"
                 ).permitAll()
                 .anyRequest().denyAll()

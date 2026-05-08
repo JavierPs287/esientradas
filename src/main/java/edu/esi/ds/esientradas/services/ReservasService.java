@@ -19,6 +19,7 @@ import edu.esi.ds.esientradas.dao.EntradaDAO;
 import edu.esi.ds.esientradas.dao.TokenDAO;
 import edu.esi.ds.esientradas.model.Entrada;
 import edu.esi.ds.esientradas.model.Estado;
+import edu.esi.ds.esientradas.services.QueueService;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,6 +35,9 @@ public class ReservasService {
     @Autowired
     private TokenDAO tokenDAO;
 
+    @Autowired
+    private QueueService queueService;
+
     @PersistenceContext
     private EntityManager entityManager;
 
@@ -43,7 +47,14 @@ public class ReservasService {
         logger.info("Intentando reservar entrada {} para usuario {}", idEntrada, tokenUsuario);
         Entrada entrada = this.entradaDAO.findById(idEntrada).orElseThrow(
                 () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Entrada no encontrada"));
-
+        // Si el espectaculo requiere cola, comprobar que el usuario tiene turno activo
+        Long espectaculoId = entrada.getEspectaculo().getId();
+        if (entrada.getEspectaculo().isRequiereCola()) {
+            if (!queueService.userHasActiveTurn(espectaculoId, tokenUsuario)) {
+                logger.error("Usuario {} intenta reservar sin turno activo para espectaculo {}", tokenUsuario, espectaculoId);
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No tiene turno activo para reservar este espectáculo");
+            }
+        }
         // Comprobamos si la entrada ya la habia reservado el mismo user
         if (this.tokenDAO.existsByTokenUsuarioAndEntradaId(tokenUsuario, idEntrada)) {
             logger.info("Usuario {} ya tiene reservada la entrada {}", tokenUsuario, idEntrada);

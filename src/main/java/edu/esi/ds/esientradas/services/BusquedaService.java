@@ -63,6 +63,8 @@ public class BusquedaService {
             dto.setArtista(e.getArtista());
             dto.setFecha(e.getFecha());
             dto.setEscenario(e.getEscenario().getNombre());
+            dto.setRequiereCola(e.isRequiereCola());
+            dto.setApertura(e.getApertura());
             logger.info("Espectáculo encontrado: ID={}, Artista={}, Fecha={}, Escenario={}", 
                 dto.getId(), dto.getArtista(), dto.getFecha(), dto.getEscenario());
             return dto;
@@ -80,6 +82,8 @@ public class BusquedaService {
             dto.setArtista(e.getArtista());
             dto.setFecha(e.getFecha());
             dto.setEscenario(e.getEscenario().getNombre());
+            dto.setRequiereCola(e.isRequiereCola());
+            dto.setApertura(e.getApertura());
             logger.info("Espectáculo encontrado: ID={}, Artista={}, Fecha={}, Escenario={}", 
                 dto.getId(), dto.getArtista(), dto.getFecha(), dto.getEscenario());
             return dto;
@@ -149,6 +153,8 @@ public class BusquedaService {
             dto.setArtista(e.getArtista());
             dto.setFecha(e.getFecha());
             dto.setEscenario(e.getEscenario().getNombre());
+            dto.setRequiereCola(e.isRequiereCola());
+            dto.setApertura(e.getApertura());
             logger.info("Espectáculo encontrado: ID={}, Artista={}, Fecha={}, Escenario={}", 
                 dto.getId(), dto.getArtista(), dto.getFecha(), dto.getEscenario());
             return dto;

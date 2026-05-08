@@ -8,6 +8,8 @@ public class DtoEspectaculo {
     private String artista;
     private LocalDateTime fecha;
     private String escenario;
+    private boolean requiereCola = false;
+    private LocalDateTime apertura;
 
     public void setId(Long id) {
         this.id = id;
@@ -31,6 +33,22 @@ public class DtoEspectaculo {
 
     public LocalDateTime getFecha() {
         return this.fecha;
+    }
+
+    public boolean isRequiereCola() {
+        return requiereCola;
+    }
+
+    public void setRequiereCola(boolean requiereCola) {
+        this.requiereCola = requiereCola;
+    }
+
+    public LocalDateTime getApertura() {
+        return apertura;
+    }
+
+    public void setApertura(LocalDateTime apertura) {
+        this.apertura = apertura;
     }
 
     public void setEscenario(String nombre) {

@@ -22,6 +22,8 @@ public class Espectaculo {
     private Long id;
     private String artista;
     private LocalDateTime fecha;
+    private boolean requiereCola = false;
+    private LocalDateTime apertura; // fecha/hora programada de apertura de la cola
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "escenario_id", nullable = false)
@@ -52,6 +54,22 @@ public class Espectaculo {
 
     public void setFecha(LocalDateTime fecha) {
         this.fecha = fecha;
+    }
+
+    public boolean isRequiereCola() {
+        return requiereCola;
+    }
+
+    public void setRequiereCola(boolean requiereCola) {
+        this.requiereCola = requiereCola;
+    }
+
+    public LocalDateTime getApertura() {
+        return apertura;
+    }
+
+    public void setApertura(LocalDateTime apertura) {
+        this.apertura = apertura;
     }
 
     @JsonIgnore
