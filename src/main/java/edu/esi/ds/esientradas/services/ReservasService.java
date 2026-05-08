@@ -1,28 +1,25 @@
 package edu.esi.ds.esientradas.services;
 
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
-
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
-import java.time.Instant;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
-import edu.esi.ds.esientradas.model.Token;
 import edu.esi.ds.esientradas.dao.EntradaDAO;
 import edu.esi.ds.esientradas.dao.TokenDAO;
 import edu.esi.ds.esientradas.model.Entrada;
 import edu.esi.ds.esientradas.model.Estado;
-import edu.esi.ds.esientradas.services.QueueService;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import edu.esi.ds.esientradas.model.Token;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 
 @Service
 public class ReservasService {
@@ -105,6 +102,44 @@ public class ReservasService {
         return this.tokenDAO.findAllByTokenUsuario(tokenUsuario).stream()
                 .mapToLong(token -> token.getEntrada().getPrecio())
                 .sum();
+    }
+
+    @Transactional(readOnly = true)
+    public List<Long> getEntradasReservadas(String tokenUsuario) {
+        updateEstado();
+        return this.tokenDAO.findAllByTokenUsuario(tokenUsuario).stream()
+                .map(token -> token.getEntrada().getId())
+                .toList();
+    }
+
+    @Transactional
+    public void migrarReservas(String tokenAnonimoUsuario, String tokenAutenticado) {
+        logger.info("Migrando reservas del token anónimo {} al token autenticado {}", 
+                tokenAnonimoUsuario, tokenAutenticado);
+        
+        // Obtener todas las reservas del token anónimo
+        List<Token> tokensAnonimos = this.tokenDAO.findAllByTokenUsuario(tokenAnonimoUsuario);
+        
+        for (Token tokenAnonimo : tokensAnonimos) {
+            // Verificar si ya existe una reserva con el token autenticado para la misma entrada
+            Optional<Token> tokenExistente = this.tokenDAO.findByTokenUsuarioAndEntradaId(
+                    tokenAutenticado, tokenAnonimo.getEntrada().getId());
+            
+            if (tokenExistente.isEmpty()) {
+                // Si no existe, actualizar el token anónimo al autenticado
+                tokenAnonimo.setTokenUsuario(tokenAutenticado);
+                this.tokenDAO.save(tokenAnonimo);
+                logger.info("Token anónimo migrado para entrada {}", tokenAnonimo.getEntrada().getId());
+            } else {
+                // Si ya existe con el token autenticado, eliminar el anónimo (evitar duplicados)
+                logger.info("Entrada {} ya estaba reservada con token autenticado, eliminando token anónimo", 
+                        tokenAnonimo.getEntrada().getId());
+                this.tokenDAO.delete(tokenAnonimo);
+            }
+        }
+        
+        entityManager.flush();
+        entityManager.clear();
     }
 
     // TODO Unificar

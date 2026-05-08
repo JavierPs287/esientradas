@@ -1,5 +1,7 @@
 package edu.esi.ds.esientradas.http;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -29,6 +31,16 @@ public class ReservasController {
     @GetMapping("/precioTotal")
     public Long getPrecioTotal(@RequestParam String token) {
         return this.reservasService.getTotalToken(token);
+    }
+
+    @GetMapping("/mis-entradas")
+    public List<Long> getMisEntradas(@RequestParam String token) {
+        return this.reservasService.getEntradasReservadas(token);
+    }
+
+    @PutMapping("/migrar")
+    public void migrarReservas(@RequestParam String tokenAnonimo, @RequestParam String tokenAutenticado) {
+        this.reservasService.migrarReservas(tokenAnonimo, tokenAutenticado);
     }
 
 }
